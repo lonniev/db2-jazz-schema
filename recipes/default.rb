@@ -14,7 +14,7 @@ bash "create Jazz DB2 Schema" do
 
   code <<-EOH
 
-    sudo -u #{db2inst1UserName} bash <<-SCRIPT
+    su - #{db2inst1UserName} <<-SCRIPT
 
       . sqllib/db2profile
 
