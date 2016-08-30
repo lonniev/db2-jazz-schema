@@ -10,13 +10,11 @@ vagrantAdmin = node['db2-jazz-schema']['vagrantAdmin']
 
 bash "create Jazz DB2 Schema" do
 
-  user db2inst1UserName
-
   only_if 'service db2fmcd status'
 
   code <<-EOH
 
-  cd ~
+  su - #{db2inst1UserName}
 
   . sqllib/db2profile
 
