@@ -5,14 +5,14 @@
 # "Creative Commons BY" Predictable Response Consulting
 # "Creative Commons BY" Sodius
 
-db2instUserName = node['db2-jazz-schema']['db2inst1UserName']
+db2inst1UserName = node['db2-jazz-schema']['db2inst1UserName']
 vagrantAdmin = node['db2-jazz-schema']['vagrantAdmin']
 
 bash "create Jazz DB2 Schema" do
 
-  user db2instUserName
+  user db2inst1UserName
 
-  only_if '[[ `ps -ef|grep db2sysc|wc -l` -gt 1 ]]'
+  only_if 'service db2fmcd status'
 
   code <<-EOH
 
