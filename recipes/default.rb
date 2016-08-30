@@ -12,7 +12,7 @@ bash "create Jazz DB2 Schema" do
 
   user db2inst1UserName
 
-  #only_if 'service db2fmcd status'
+  only_if 'service db2fmcd status'
 
   code <<-EOH
 
