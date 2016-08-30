@@ -22,11 +22,13 @@ databases = [
   { :db => 'DW', :size => '16384' }
 ]
 
+numDatabases = databases.size
+
 databases.each { |spec|
 
   db = spec[:db]
   size = spec[:size]
-  
+
   bash "create Jazz DB2 Schema for #{db}" do
 
     only_if 'service db2fmcd status'
@@ -47,7 +49,7 @@ EOH
   end
 }
 
-bash "Update DB2 CFG for #{databases.size} Databases" do
+bash "Update DB2 CFG for #{numDatabases} Databases" do
 
     only_if 'service db2fmcd status'
 
@@ -57,10 +59,10 @@ bash "Update DB2 CFG for #{databases.size} Databases" do
 
         . sqllib/db2profile
 
-    db2 update dbm cfg using numdb 11
+        db2 update dbm cfg using numdb #{numDatabases}
 
-    db2stop
-    db2start
+        db2stop
+        db2start
 
 SCRIPT
 EOH
