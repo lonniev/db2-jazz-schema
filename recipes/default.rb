@@ -75,7 +75,11 @@ bash "create Jazz DB2 Schema" do
       db2 disconnect DW
 
       db2 update dbm cfg using numdb 11
-    SCRIPT
-  EOH
+
+      db2stop
+
+      db2start
+SCRIPT
+EOH
 
 end
