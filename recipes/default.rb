@@ -8,77 +8,57 @@
 db2inst1UserName = node['db2-jazz-schema']['db2inst1UserName']
 vagrantAdmin = node['db2-jazz-schema']['vagrantAdmin']
 
-bash "create Jazz DB2 Schema" do
+databases = [
+  { :db => 'JTS', :size => '16384' },
+  { :db => 'CCM', :size => '16384' },
+  { :db => 'QM', :size => '16384' },
+  { :db => 'RM', :size => '16384' },
+  { :db => 'LQE', :size => '32768' },
+  { :db => 'LDX', :size => '32768' },
+  { :db => 'DCC', :size => '16384' },
+  { :db => 'GC', :size => '16384' },
+  { :db => 'RELM', :size => '16384' },
+  { :db => 'DM', :size => '16384' },
+  { :db => 'DW', :size => '16384' }
+]
 
-  only_if 'service db2fmcd status'
+databases.each { |db, size|
 
-  code <<-EOH
+  bash "create Jazz DB2 Schema for #{db}" do
 
-    su - #{db2inst1UserName} <<-SCRIPT
+    only_if 'service db2fmcd status'
 
-      . sqllib/db2profile
+    code <<-EOH
 
-      db2 create database JTS using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database CCM using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database QM using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database RM using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database LQE using codeset UTF-8 territory en PAGESIZE 32768
-      db2 create database LDX using codeset UTF-8 territory en PAGESIZE 32768
-      db2 create database DCC using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database GC using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database RELM using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database DM using codeset UTF-8 territory en PAGESIZE 16384
-      db2 create database DW using codeset UTF-8 territory en PAGESIZE 16384
+      su - #{db2inst1UserName} <<-SCRIPT
 
-      db2 connect to JTS
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect JTS
+        . sqllib/db2profile
 
-      db2 connect to CCM
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect CCM
+        db2 create database #{db} using codeset UTF-8 territory en PAGESIZE #{size}
 
-      db2 connect to QM
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect QM
+        db2 connect to #{db}
+        db2 grant dbadm on database to user #{vagrantAdmin}
+        db2 disconnect #{db}
+SCRIPT
+EOH
+  end
+}
 
-      db2 connect to RM
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect RM
+bash "Update DB2 CFG for #{databases.size} Databases" do
 
-      db2 connect to LQE
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect LQE
+    only_if 'service db2fmcd status'
 
-      db2 connect to LDX
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect LDX
+    code <<-EOH
 
-      db2 connect to DCC
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect DCC
+      su - #{db2inst1UserName} <<-SCRIPT
 
-      db2 connect to GC
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect GC
+        . sqllib/db2profile
 
-      db2 connect to RELM
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect RELM
+    db2 update dbm cfg using numdb 11
 
-      db2 connect to DM
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect DM
-
-      db2 connect to DW
-      db2 grant dbadm on database to user #{vagrantAdmin}
-      db2 disconnect DW
-
-      db2 update dbm cfg using numdb 11
-
-      db2stop
-
-      db2start
+    db2stop
+    db2start
+    
 SCRIPT
 EOH
 
