@@ -85,7 +85,7 @@ databases.each { |spec|
 
         . sqllib/db2profile
 
-        db2 activate #{db}
+        db2 activate database #{db}
 SCRIPT
 EOH
   end
