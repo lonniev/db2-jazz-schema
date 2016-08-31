@@ -43,6 +43,7 @@ databases.each { |spec|
 
         db2 connect to #{db}
         db2 grant dbadm on database to user #{vagrantAdmin}
+        db2 grant dbadm on database to user #{db2inst1UserName}
         db2 disconnect #{db}
 SCRIPT
 EOH
@@ -68,3 +69,24 @@ SCRIPT
 EOH
 
 end
+
+databases.each { |spec|
+
+  db = spec[:db]
+  size = spec[:size]
+
+  bash "db2 activate #{db}" do
+
+    only_if 'service db2fmcd status'
+
+    code <<-EOH
+
+      su - #{db2inst1UserName} <<-SCRIPT
+
+        . sqllib/db2profile
+
+        db2 activate #{db}
+SCRIPT
+EOH
+  end
+}
