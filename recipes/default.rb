@@ -7,6 +7,7 @@
 
 db2inst1UserName = node['db2-jazz-schema']['db2inst1UserName']
 vagrantAdmin = node['db2-jazz-schema']['vagrantAdmin']
+db2AdminGroup = node['db2-jazz-schema']['db2AdminGroup']
 
 databases = [
   { :db => 'JTS', :size => '16384' },
@@ -62,6 +63,8 @@ bash "Update DB2 CFG for #{numDatabases} Databases" do
 
         db2 update dbm cfg using numdb #{numDatabases}
 
+        db2 update dbm cfg using SYSADM_GROUP #{vagrantAdmin}
+
         db2stop
         db2start
 
@@ -69,6 +72,24 @@ SCRIPT
 EOH
 
 end
+
+bash "DB2 update SYSADM_GROUP #{db2AdminGroup}" do
+
+    only_if 'service db2fmcd status'
+
+    code <<-EOH
+
+      su - #{db2inst1UserName} <<-SCRIPT
+
+        . sqllib/db2profile
+
+        db2 update dbm cfg using SYSADM_GROUP #{db2AdminGroup}
+
+SCRIPT
+EOH
+
+end
+
 
 databases.each { |spec|
 
