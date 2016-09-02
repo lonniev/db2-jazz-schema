@@ -134,15 +134,15 @@ bash "Update DB2 CFG for the DW Database" do
 
         . sqllib/db2profile
 
-        DB2 UPDATE DB CFG FOR DW USING MAXAPPLS 300
+        db2 update db cfg for DW using maxappls 300
 
-        DB2 UPDATE DB CFG FOR DW USING LOCKLIST 20000
+        db2 update db cfg for DW using locklist 20000
 
-        DB2 UPDATE DB CFG FOR DW USING LOGFILSIZ 20000
+        db2 update db cfg for DW using logfilsiz 20000
 
-        DB2 UPDATE DB CFG FOR DW USING LOGPRIMARY 50
+        db2 update db cfg for DW using logprimary 50
 
-        DB2 UPDATE DB CFG FOR DW USING LOGSECOND 200
+        db2 update db cfg for DW using logsecond 200
 SCRIPT
 EOH
 
