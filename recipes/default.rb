@@ -42,12 +42,46 @@ databases = [
 
 numDatabases = databases.size
 
+# first try to erase each
+databases.each { |spec|
+
+  db = spec[:db]
+
+  bash "Drop DB2 Database #{db} - if it exists" do
+
+    only_if 'service db2fmcd status'
+
+    code <<-EOH
+
+      su - #{db2inst1UserName} <<-SCRIPT
+
+        . sqllib/db2profile
+
+        db2 connect to #{db}
+
+        db2 quiesce database immediate force connections
+
+        db2 unquiesce database
+
+        db2 force application all
+
+        db2stop force
+        db2start
+
+        db2 drop database #{db}
+
+        true
+SCRIPT
+EOH
+  end
+}
+
 databases.each { |spec|
 
   db = spec[:db]
   size = spec[:size]
 
-  bash "create Jazz DB2 Schema for #{db}" do
+  bash "Create DB2 Database for #{db}" do
 
     only_if 'service db2fmcd status'
 
@@ -83,6 +117,32 @@ bash "Update DB2 CFG for #{numDatabases} Databases" do
         db2stop
         db2start
 
+SCRIPT
+EOH
+
+end
+
+# some tuning just for DW
+# See http://www.ibm.com/support/knowledgecenter/SSYMRC_6.0.2/com.ibm.jazz.install.doc/topics/roadmap_form.html
+bash "Update DB2 CFG for the DW Database" do
+
+    only_if 'service db2fmcd status'
+
+    code <<-EOH
+
+      su - #{db2inst1UserName} <<-SCRIPT
+
+        . sqllib/db2profile
+
+        DB2 UPDATE DB CFG FOR DW USING MAXAPPLS 300
+
+        DB2 UPDATE DB CFG FOR DW USING LOCKLIST 20000
+
+        DB2 UPDATE DB CFG FOR DW USING LOGFILSIZ 20000
+
+        DB2 UPDATE DB CFG FOR DW USING LOGPRIMARY 50
+
+        DB2 UPDATE DB CFG FOR DW USING LOGSECOND 200
 SCRIPT
 EOH
 
