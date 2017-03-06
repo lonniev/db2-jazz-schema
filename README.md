@@ -1,18 +1,17 @@
 # db2-jazz-schema Cookbook
 
-TODO: Enter the cookbook description here.
+Drops known, existing Jazz DB2 databases on the specified DB2 server and then creates new DB2
+databases in the indicated DB2 instance on the specified DB2 server. It then configures those
+databases according to IBM's recommendations.
 
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+The resulting DB2 Jazz Schema is ready for administration by the chosen Unix user to create the
+suitable tables within each Jazz DB2 database.
 
 ## Requirements
 
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
-
-e.g.
 ### Platforms
 
-- SandwichOS
+- Ubuntu Linux 64-bit
 
 ### Chef
 
@@ -20,37 +19,25 @@ e.g.
 
 ### Cookbooks
 
-- `toaster` - db2-jazz-schema needs toaster to brown your bagel.
+- `db2-express-community` - db2-express-community isn't a dependency but can be used
+to assure that a proper DB2 installation is available.
 
 ## Attributes
 
-TODO: List your cookbook attributes here.
-
-e.g.
 ### db2-jazz-schema::default
 
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['db2-jazz-schema']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
+```json
+{
+  'db2inst1UserName' => 'db2inst1',
+  'vagrantAdmin' => 'vagrant',
+  'db2AdminGroup' => 'db2admin'
+}
+```
 
 ## Usage
 
 ### db2-jazz-schema::default
 
-TODO: Write usage instructions for each cookbook.
-
-e.g.
 Just include `db2-jazz-schema` in your node's `run_list`:
 
 ```json
@@ -62,19 +49,6 @@ Just include `db2-jazz-schema` in your node's `run_list`:
 }
 ```
 
-## Contributing
-
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
-
-e.g.
-1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
-3. Write your change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request using Github
-
 ## License and Authors
 
-Authors: TODO: List authors
-
+Authors: Lonnie VanZandt
